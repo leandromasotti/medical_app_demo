@@ -63,11 +63,41 @@ The API documentation (Swagger) will be available at http://localhost:3001/api
 
 ## API Endpoints
 
-- `GET /api/products` - Get all products
-- `GET /api/products/:id` - Get a specific product by ID
-- `POST /api/products` - Create a new product
-- `PUT /api/products/:id` - Update a product
-- `DELETE /api/products/:id` - Delete a product
+### Doctors
+- `GET /doctors` - Get all doctors
+- `GET /doctors/:id` - Get a specific doctor by ID
+- `POST /doctors` - Create a new doctor
+- `PATCH /doctors/:id` - Update a doctor
+- `DELETE /doctors/:id` - Delete a doctor
+
+### Clinics
+- `GET /clinics` - Get all clinics
+- `GET /clinics/:id` - Get a specific clinic by ID
+- `POST /clinics` - Create a new clinic
+- `PATCH /clinics/:id` - Update a clinic
+- `DELETE /clinics/:id` - Delete a clinic
+
+### Medical Services
+- `GET /medical-services` - Get all medical services
+- `GET /medical-services/:id` - Get a specific medical service by ID
+- `POST /medical-services` - Create a new medical service
+- `PATCH /medical-services/:id` - Update a medical service
+- `DELETE /medical-services/:id` - Delete a medical service
+
+### Patients
+- `GET /patients` - Get all patients
+- `GET /patients/:id` - Get a specific patient by ID
+- `POST /patients` - Create a new patient
+- `PATCH /patients/:id` - Update a patient
+- `DELETE /patients/:id` - Delete a patient
+
+### Patient Medical Services
+- `POST /patient-medical-services` - Create a new patient medical service relationship
+- `GET /patient-medical-services` - Get all patient medical service relationships
+- `GET /patient-medical-services/:id` - Get a specific patient medical service relationship
+- `GET /patient-medical-services/patient/:patientId` - Get all medical services for a specific patient
+- `PATCH /patient-medical-services/:id` - Update a patient medical service relationship
+- `DELETE /patient-medical-services/:id` - Delete a patient medical service relationship
 
 ## Technologies Used
 
