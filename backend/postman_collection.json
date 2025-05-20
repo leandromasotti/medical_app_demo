@@ -1,0 +1,401 @@
+{
+  "info": {
+    "name": "Medical App API",
+    "description": "API para la aplicación médica con endpoints de doctores, clínicas, servicios médicos y pacientes",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Doctores",
+      "item": [
+        {
+          "name": "Obtener todos los doctores",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/doctors",
+              "host": ["{{baseUrl}}"],
+              "path": ["doctors"]
+            }
+          }
+        },
+        {
+          "name": "Obtener doctor por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/doctors/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["doctors", "1"]
+            }
+          }
+        },
+        {
+          "name": "Crear doctor",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/doctors",
+              "host": ["{{baseUrl}}"],
+              "path": ["doctors"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Carlos\",\n  \"lastName\": \"González\",\n  \"specialization\": \"Pediatría\",\n  \"licenseNumber\": \"CR54321\",\n  \"email\": \"carlos.gonzalez@medical.com\",\n  \"phone\": \"+506 6666-6666\",\n  \"clinicId\": 1,\n  \"yearsOfExperience\": 8,\n  \"education\": [\n    \"Universidad de Costa Rica - Medicina\",\n    \"Universidad de Barcelona - Especialización en Pediatría\"\n  ],\n  \"languages\": [\"Español\", \"Inglés\"],\n  \"image\": \"/images/doctors/doctor3.jpg\",\n  \"availability\": {\n    \"days\": [\"Lunes\", \"Martes\", \"Jueves\"],\n    \"hours\": \"9:00 AM - 5:00 PM\"\n  },\n  \"bio\": \"Pediatra con experiencia en el cuidado de niños y adolescentes.\",\n  \"certifications\": [\n    \"Board Certified in Pediatrics\",\n    \"Pediatric Advanced Life Support\"\n  ],\n  \"isAvailable\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Actualizar doctor",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/doctors/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["doctors", "1"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+506 8888-9999\",\n  \"availability\": {\n    \"days\": [\"Lunes\", \"Miércoles\", \"Viernes\"],\n    \"hours\": \"8:00 AM - 4:00 PM\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Eliminar doctor",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/doctors/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["doctors", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Clínicas",
+      "item": [
+        {
+          "name": "Obtener todas las clínicas",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/clinics",
+              "host": ["{{baseUrl}}"],
+              "path": ["clinics"]
+            }
+          }
+        },
+        {
+          "name": "Obtener clínica por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/clinics/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["clinics", "1"]
+            }
+          }
+        },
+        {
+          "name": "Crear clínica",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/clinics",
+              "host": ["{{baseUrl}}"],
+              "path": ["clinics"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Clínica de Especialidades\",\n  \"description\": \"Clínica especializada en múltiples áreas médicas.\",\n  \"address\": {\n    \"street\": \"Avenida Principal 789\",\n    \"city\": \"Alajuela\",\n    \"state\": \"Alajuela\",\n    \"country\": \"Costa Rica\",\n    \"zipCode\": \"20101\"\n  },\n  \"phone\": \"+506 4444-4444\",\n  \"email\": \"info@clinicaespecialidades.com\",\n  \"website\": \"www.clinicaespecialidades.com\",\n  \"operatingHours\": {\n    \"Lunes\": { \"open\": \"7:00 AM\", \"close\": \"7:00 PM\" },\n    \"Martes\": { \"open\": \"7:00 AM\", \"close\": \"7:00 PM\" },\n    \"Miércoles\": { \"open\": \"7:00 AM\", \"close\": \"7:00 PM\" },\n    \"Jueves\": { \"open\": \"7:00 AM\", \"close\": \"7:00 PM\" },\n    \"Viernes\": { \"open\": \"7:00 AM\", \"close\": \"7:00 PM\" },\n    \"Sábado\": { \"open\": \"8:00 AM\", \"close\": \"2:00 PM\" }\n  },\n  \"services\": [\n    \"Consultas médicas\",\n    \"Laboratorio clínico\",\n    \"Radiología\",\n    \"Farmacia\"\n  ],\n  \"specialties\": [\n    \"Cardiología\",\n    \"Dermatología\",\n    \"Ginecología\",\n    \"Pediatría\"\n  ],\n  \"facilities\": [\n    \"Estacionamiento\",\n    \"Acceso para discapacitados\",\n    \"Sala de espera climatizada\"\n  ],\n  \"images\": [\n    \"/images/clinics/clinic3-1.jpg\",\n    \"/images/clinics/clinic3-2.jpg\"\n  ],\n  \"insuranceAccepted\": [\n    \"INS\",\n    \"Medismart\",\n    \"Blue Cross\"\n  ],\n  \"languages\": [\"Español\", \"Inglés\"],\n  \"isVerified\": true,\n  \"location\": {\n    \"latitude\": 10.0167,\n    \"longitude\": -84.2167\n  },\n  \"emergencyServices\": true,\n  \"parkingAvailable\": true,\n  \"wheelchairAccessible\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Actualizar clínica",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/clinics/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["clinics", "1"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+506 2222-3333\",\n  \"operatingHours\": {\n    \"Lunes\": { \"open\": \"8:00 AM\", \"close\": \"8:00 PM\" },\n    \"Martes\": { \"open\": \"8:00 AM\", \"close\": \"8:00 PM\" },\n    \"Miércoles\": { \"open\": \"8:00 AM\", \"close\": \"8:00 PM\" },\n    \"Jueves\": { \"open\": \"8:00 AM\", \"close\": \"8:00 PM\" },\n    \"Viernes\": { \"open\": \"8:00 AM\", \"close\": \"8:00 PM\" },\n    \"Sábado\": { \"open\": \"9:00 AM\", \"close\": \"3:00 PM\" }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Eliminar clínica",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/clinics/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["clinics", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Servicios Médicos",
+      "item": [
+        {
+          "name": "Obtener todos los servicios médicos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/medical-services",
+              "host": ["{{baseUrl}}"],
+              "path": ["medical-services"]
+            }
+          }
+        },
+        {
+          "name": "Obtener servicio médico por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/medical-services/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["medical-services", "1"]
+            }
+          }
+        },
+        {
+          "name": "Crear servicio médico",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/medical-services",
+              "host": ["{{baseUrl}}"],
+              "path": ["medical-services"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Consulta Ginecológica\",\n  \"description\": \"Evaluación completa de la salud ginecológica por especialistas certificados.\",\n  \"longDescription\": \"Nuestra consulta ginecológica ofrece una evaluación exhaustiva de su salud reproductiva y ginecológica, incluyendo: historia clínica detallada, examen físico completo, pruebas de laboratorio y recomendaciones personalizadas.\",\n  \"category\": \"Ginecología\",\n  \"price\": 120,\n  \"duration\": \"45 minutos\",\n  \"clinicId\": 1,\n  \"doctorIds\": [1],\n  \"requirements\": [\n    \"No tener relaciones sexuales 24 horas antes\",\n    \"Traer estudios previos si los tiene\"\n  ],\n  \"preparation\": [\n    \"Vestir ropa cómoda\",\n    \"Llegar 15 minutos antes\"\n  ],\n  \"aftercare\": [\n    \"Seguir indicaciones del médico\",\n    \"Programar seguimiento según recomendación\"\n  ],\n  \"risks\": [\n    \"Molestias durante el procedimiento\"\n  ],\n  \"benefits\": [\n    \"Diagnóstico temprano de problemas ginecológicos\",\n    \"Prevención de enfermedades\",\n    \"Plan de tratamiento personalizado\"\n  ],\n  \"contraindications\": [\n    \"Embarazo en primer trimestre\"\n  ],\n  \"images\": [\n    \"/images/services/gynecology-1.jpg\",\n    \"/images/services/gynecology-2.jpg\"\n  ],\n  \"isAvailable\": true,\n  \"insuranceCoverage\": {\n    \"covered\": true,\n    \"coveragePercentage\": 75,\n    \"insuranceProviders\": [\"INS\", \"Medismart\", \"Blue Cross\"]\n  },\n  \"specializations\": [\n    \"Ginecología general\",\n    \"Obstetricia\",\n    \"Ginecología preventiva\"\n  ],\n  \"equipment\": [\n    \"Equipo de ultrasonido\",\n    \"Equipo de colposcopía\"\n  ],\n  \"certifications\": [\n    \"Certificación en Ginecología\",\n    \"Certificación en Obstetricia\"\n  ],\n  \"location\": {\n    \"latitude\": 9.9281,\n    \"longitude\": -84.0907\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Actualizar servicio médico",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/medical-services/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["medical-services", "1"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 160,\n  \"duration\": \"1 hora y 15 minutos\",\n  \"requirements\": [\n    \"Ayuno de 8 horas\",\n    \"Traer estudios previos si los tiene\",\n    \"Lista de medicamentos actuales\",\n    \"No consumir alcohol 24 horas antes\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Eliminar servicio médico",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/medical-services/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["medical-services", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pacientes",
+      "item": [
+        {
+          "name": "Obtener todos los pacientes",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/patients",
+              "host": ["{{baseUrl}}"],
+              "path": ["patients"]
+            }
+          }
+        },
+        {
+          "name": "Obtener paciente por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/patients/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["patients", "1"]
+            }
+          }
+        },
+        {
+          "name": "Crear paciente",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/patients",
+              "host": ["{{baseUrl}}"],
+              "path": ["patients"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"María\",\n  \"lastName\": \"González\",\n  \"email\": \"maria.gonzalez@email.com\",\n  \"phone\": \"+506 7777-7777\",\n  \"dateOfBirth\": \"1985-05-15\",\n  \"gender\": \"Femenino\",\n  \"address\": {\n    \"street\": \"Calle Principal 123\",\n    \"city\": \"San José\",\n    \"state\": \"San José\",\n    \"country\": \"Costa Rica\",\n    \"zipCode\": \"10101\"\n  },\n  \"medicalHistory\": {\n    \"conditions\": [\"Hipertensión\", \"Diabetes tipo 2\"],\n    \"allergies\": [\"Penicilina\"],\n    \"medications\": [\"Metformina\", \"Losartán\"],\n    \"surgeries\": [\"Apendicectomía\"]\n  },\n  \"insurance\": {\n    \"provider\": \"INS\",\n    \"policyNumber\": \"INS123456\",\n    \"groupNumber\": \"GRP789\",\n    \"coverageDetails\": \"Cobertura completa\"\n  },\n  \"emergencyContact\": {\n    \"name\": \"Juan González\",\n    \"relationship\": \"Esposo\",\n    \"phone\": \"+506 8888-8888\"\n  },\n  \"bloodType\": \"O+\",\n  \"height\": 165,\n  \"weight\": 65,\n  \"preferredLanguage\": \"Español\",\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Actualizar paciente",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/patients/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["patients", "1"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+506 7777-8888\",\n  \"medicalHistory\": {\n    \"conditions\": [\"Hipertensión\", \"Diabetes tipo 2\", \"Artritis\"],\n    \"medications\": [\"Metformina\", \"Losartán\", \"Ibuprofeno\"]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Eliminar paciente",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/patients/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["patients", "1"]
+            }
+          }
+        },
+        {
+          "name": "Obtener servicios médicos del paciente",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/patients/1/medical-services",
+              "host": ["{{baseUrl}}"],
+              "path": ["patients", "1", "medical-services"]
+            }
+          }
+        },
+        {
+          "name": "Obtener servicio médico específico del paciente",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/patients/1/medical-services/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["patients", "1", "medical-services", "1"]
+            }
+          }
+        },
+        {
+          "name": "Crear servicio médico para paciente",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/patients/1/medical-services",
+              "host": ["{{baseUrl}}"],
+              "path": ["patients", "1", "medical-services"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"medicalServiceId\": 1,\n  \"status\": \"SCHEDULED\",\n  \"scheduledDate\": \"2024-03-20T10:00:00Z\",\n  \"clinicId\": 1,\n  \"doctorId\": 1,\n  \"price\": 50000,\n  \"paymentStatus\": \"PENDING\",\n  \"insuranceCoverage\": {\n    \"covered\": true,\n    \"coverageAmount\": 40000,\n    \"policyNumber\": \"INS123456\"\n  },\n  \"followUpRequired\": false,\n  \"notes\": \"Paciente requiere ayuno de 8 horas antes del procedimiento\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Actualizar servicio médico del paciente",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/patients/1/medical-services/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["patients", "1", "medical-services", "1"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CONFIRMED\",\n  \"paymentStatus\": \"PARTIALLY_PAID\",\n  \"paymentAmount\": 25000,\n  \"notes\": \"Paciente ha realizado pago parcial\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Eliminar servicio médico del paciente",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/patients/1/medical-services/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["patients", "1", "medical-services", "1"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001",
+      "type": "string"
+    }
+  ]
+} 
