@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Search Page Feature**
+  - Created new search page at `src/app/search/page.tsx`
+  - Implemented comprehensive search functionality for doctors and clinics
+  - Added filtering by specialty and search by name/specialty
+  - Included detailed view for both doctor and clinic profiles
+  - Implemented appointment scheduling workflow with date and time selection
+  - Added payment processing interface with order summary
+  - Used mock data for demonstration purposes
+  - Implemented responsive grid layouts for search results and details pages
+
 - **Health Dashboard Feature**
   - Created new health page at `src/app/health/page.tsx`
   - Implemented comprehensive health dashboard with multiple sections:
@@ -58,7 +68,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Structured data to simulate future integration with authentication system
 
 - **Navigation Updates**
-  - Updated navigation in `src/app/layout.tsx` to include links to the profile, health, and contact pages
+  - Updated navigation in `src/app/layout.tsx` to include links to the profile, health, search, and contact pages
   - Maintained consistent styling with existing navigation links
 
 ### Technical Details
