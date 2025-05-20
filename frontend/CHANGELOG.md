@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Health Dashboard Feature**
+  - Created new health page at `src/app/health/page.tsx`
+  - Implemented comprehensive health dashboard with multiple sections:
+    - Quick action buttons for common tasks
+    - Upcoming appointments with scheduling information
+    - Recent lab tests with results and status
+    - Recent medical visits with provider information
+    - Medical documents with download options
+    - Healthcare providers directory with contact information
+  - Used mock data for demonstration purposes
+  - Implemented responsive tables and card layouts
+  - Added interactive elements like buttons for actions (view details, download, etc.)
+
 - **Contact Page Feature**
   - Created new contact page at `src/app/contact/page.tsx`
   - Implemented responsive layout with grid system
@@ -45,12 +58,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Structured data to simulate future integration with authentication system
 
 - **Navigation Updates**
-  - Updated navigation in `src/app/layout.tsx` to include links to the profile and contact pages
+  - Updated navigation in `src/app/layout.tsx` to include links to the profile, health, and contact pages
   - Maintained consistent styling with existing navigation links
 
 ### Technical Details
 - Utilized existing Tailwind CSS classes for consistent styling
-- Leveraged Next.js App Router for new routes (profile and contact pages)
+- Leveraged Next.js App Router for new routes (profile, health, and contact pages)
 - Implemented responsive design principles throughout all pages
 - Created modular components within pages for better maintainability
 - Added placeholder functionality for future authentication integration
