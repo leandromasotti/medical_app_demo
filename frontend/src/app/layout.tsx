@@ -25,6 +25,7 @@ export default function RootLayout({
                 <li><a href="/" className="hover:underline">Home</a></li>
                 <li><a href="/products" className="hover:underline">Products</a></li>
                 <li><a href="/profile" className="hover:underline">Profile</a></li>
+                <li><a href="/contact" className="hover:underline">Contact</a></li>
               </ul>
             </nav>
           </div>
