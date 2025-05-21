@@ -1,12 +1,49 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePatientMedicalServiceDto } from './dto/create-patient-medical-service.dto';
 import { UpdatePatientMedicalServiceDto } from './dto/update-patient-medical-service.dto';
-import { PatientMedicalService } from './interfaces/patient-medical-service.interface';
+import { PatientMedicalService, PatientMedicalServiceStatus } from './interfaces/patient-medical-service.interface';
 
 @Injectable()
 export class PatientMedicalServicesService {
   // In-memory database for simplicity
-  private readonly patientMedicalServices: PatientMedicalService[] = [];
+  private readonly patientMedicalServices: PatientMedicalService[] = [
+    {
+      id: 1,
+      patientId: 1,
+      medicalServiceId: 1,
+      status: PatientMedicalServiceStatus.SCHEDULED,
+      notes: 'Initial consultation',
+      createdAt: new Date('2025-05-01'),
+      updatedAt: new Date('2025-05-01')
+    },
+    {
+      id: 2,
+      patientId: 1,
+      medicalServiceId: 2,
+      status: PatientMedicalServiceStatus.COMPLETED,
+      notes: 'Follow-up appointment completed successfully',
+      createdAt: new Date('2025-04-15'),
+      updatedAt: new Date('2025-04-20')
+    },
+    {
+      id: 3,
+      patientId: 2,
+      medicalServiceId: 3,
+      status: PatientMedicalServiceStatus.SCHEDULED,
+      notes: 'Annual checkup',
+      createdAt: new Date('2025-05-10'),
+      updatedAt: new Date('2025-05-10')
+    },
+    {
+      id: 4,
+      patientId: 2,
+      medicalServiceId: 4,
+      status: PatientMedicalServiceStatus.CANCELLED,
+      notes: 'Patient requested cancellation',
+      createdAt: new Date('2025-04-01'),
+      updatedAt: new Date('2025-04-05')
+    }
+  ];
 
   create(createPatientMedicalServiceDto: CreatePatientMedicalServiceDto): Promise<PatientMedicalService> {
     const newPatientMedicalService: PatientMedicalService = {
@@ -61,4 +98,4 @@ export class PatientMedicalServicesService {
     this.patientMedicalServices.splice(serviceIndex, 1);
     return Promise.resolve(true);
   }
-} 
+}
