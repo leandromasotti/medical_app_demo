@@ -8,6 +8,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+- **Backend API Integration**
+  - Created API service layer in `src/services/` to connect with backend
+  - Implemented type-safe service files for each entity:
+    - `clinics.service.ts` for clinic operations
+    - `doctors.service.ts` for doctor operations
+    - `medical-services.service.ts` for medical services operations
+    - `patients.service.ts` for patient operations
+    - `patient-medical-services.service.ts` for patient medical services operations
+  - Added TypeScript interfaces in `src/types/index.ts` matching backend data models
+  - Created utility functions in `src/utils/path-utils.ts` for API path resolution and data formatting
+  - Added environment configuration with `.env.local` for API URL
+
+- **Component Library**
+  - Created reusable components in `src/components/`:
+    - `MedicalServiceCard.tsx` for displaying medical service information
+    - `ErrorState.tsx` for handling error scenarios
+    - `LoadingState.tsx` for displaying loading states
+  - Added custom styles in `globals.css` for new components
+
+- **Page Updates**
+  - Updated home page to fetch and display featured medical services from API
+  - Updated products page to fetch and display all medical services from API
+  - Updated product detail page to fetch and display detailed information about specific medical services
+  - Added error handling and loading states to all pages
+  - Implemented dynamic category filtering based on available medical service categories
+
+### Changed
+  - Replaced hardcoded data with dynamic data from backend API
+  - Enhanced product cards with additional information from backend
+  - Improved error handling with dedicated error components
+  - Updated styling for consistency across the application
+
 - **Search Page Feature**
   - Created new search page at `src/app/search/page.tsx`
   - Implemented comprehensive search functionality for doctors and clinics

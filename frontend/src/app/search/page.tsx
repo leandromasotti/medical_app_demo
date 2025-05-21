@@ -1,236 +1,111 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { DoctorsService } from '@/services/doctors.service';
+import { ClinicsService } from '@/services/clinics.service';
+import { Doctor, Clinic } from '@/types';
+import LoadingState from '@/components/LoadingState';
+import ErrorState from '@/components/ErrorState';
 
-// Mock data for demonstration purposes
-const mockDoctors = [
-  { 
-    id: 1, 
-    name: 'Dr. Maria Rodriguez', 
-    specialty: 'Primary Care', 
-    clinic: 'Central Medical Center',
-    address: 'Avenida Central, San José',
-    phone: '+506 2222-1111',
-    email: 'maria.rodriguez@centralmedical.com',
-    rating: 4.8,
-    reviews: 124,
-    education: 'Universidad de Costa Rica, M.D.',
-    languages: ['Spanish', 'English'],
-    availability: [
-      { day: 'Monday', hours: '9:00 AM - 5:00 PM' },
-      { day: 'Wednesday', hours: '9:00 AM - 5:00 PM' },
-      { day: 'Friday', hours: '9:00 AM - 3:00 PM' },
-    ],
-    image: '/images/doctor-placeholder.jpg',
-  },
-  { 
-    id: 2, 
-    name: 'Dr. Carlos Jimenez', 
-    specialty: 'Cardiology', 
-    clinic: 'Heart & Vascular Institute',
-    address: 'Calle 5, Escazú, San José',
-    phone: '+506 2222-2222',
-    email: 'carlos.jimenez@heartinstitute.com',
-    rating: 4.9,
-    reviews: 98,
-    education: 'Universidad de Costa Rica, M.D., Cardiology Specialist',
-    languages: ['Spanish', 'English', 'Portuguese'],
-    availability: [
-      { day: 'Tuesday', hours: '8:00 AM - 4:00 PM' },
-      { day: 'Thursday', hours: '8:00 AM - 4:00 PM' },
-    ],
-    image: '/images/doctor-placeholder.jpg',
-  },
-  { 
-    id: 3, 
-    name: 'Dr. Ana Vargas', 
-    specialty: 'Dermatology', 
-    clinic: 'Skin Health Clinic',
-    address: 'Avenida Escazú, San José',
-    phone: '+506 2222-3333',
-    email: 'ana.vargas@skinhealth.com',
-    rating: 4.7,
-    reviews: 156,
-    education: 'Universidad de Costa Rica, M.D., Dermatology Specialist',
-    languages: ['Spanish', 'English', 'French'],
-    availability: [
-      { day: 'Monday', hours: '10:00 AM - 6:00 PM' },
-      { day: 'Wednesday', hours: '10:00 AM - 6:00 PM' },
-      { day: 'Friday', hours: '10:00 AM - 2:00 PM' },
-    ],
-    image: '/images/doctor-placeholder.jpg',
-  },
-  { 
-    id: 4, 
-    name: 'Dr. Roberto Campos', 
-    specialty: 'Orthopedics', 
-    clinic: 'Joint & Bone Center',
-    address: 'Calle Principal, Heredia',
-    phone: '+506 2222-4444',
-    email: 'roberto.campos@jointbone.com',
-    rating: 4.6,
-    reviews: 87,
-    education: 'Universidad de Costa Rica, M.D., Orthopedic Surgery',
-    languages: ['Spanish', 'English'],
-    availability: [
-      { day: 'Tuesday', hours: '9:00 AM - 5:00 PM' },
-      { day: 'Thursday', hours: '9:00 AM - 5:00 PM' },
-      { day: 'Saturday', hours: '9:00 AM - 1:00 PM' },
-    ],
-    image: '/images/doctor-placeholder.jpg',
-  },
-  { 
-    id: 5, 
-    name: 'Dr. Laura Mendez', 
-    specialty: 'Pediatrics', 
-    clinic: 'Children\'s Wellness Center',
-    address: 'Avenida 10, San José',
-    phone: '+506 2222-5555',
-    email: 'laura.mendez@childrenswellness.com',
-    rating: 4.9,
-    reviews: 203,
-    education: 'Universidad de Costa Rica, M.D., Pediatrics Specialist',
-    languages: ['Spanish', 'English'],
-    availability: [
-      { day: 'Monday', hours: '8:00 AM - 4:00 PM' },
-      { day: 'Wednesday', hours: '8:00 AM - 4:00 PM' },
-      { day: 'Friday', hours: '8:00 AM - 12:00 PM' },
-    ],
-    image: '/images/doctor-placeholder.jpg',
-  },
-];
+// Type for availability display
+interface AvailabilityDisplay {
+  day: string;
+  hours: string;
+}
 
-const mockClinics = [
-  {
-    id: 1,
-    name: 'Central Medical Center',
-    specialties: ['Primary Care', 'Internal Medicine', 'Pediatrics', 'Gynecology'],
-    address: 'Avenida Central, San José',
-    phone: '+506 2222-1000',
-    email: 'info@centralmedical.com',
-    rating: 4.7,
-    reviews: 312,
-    hours: [
-      { day: 'Monday-Friday', hours: '7:00 AM - 9:00 PM' },
-      { day: 'Saturday', hours: '8:00 AM - 5:00 PM' },
-      { day: 'Sunday', hours: '9:00 AM - 1:00 PM' },
-    ],
-    services: ['General Consultations', 'Laboratory Tests', 'X-Ray', 'Ultrasound', 'Minor Surgery'],
-    insurance: ['INS', 'CCSS', 'Medismart', 'BlueCross'],
-    image: '/images/clinic-placeholder.jpg',
-  },
-  {
-    id: 2,
-    name: 'Heart & Vascular Institute',
-    specialties: ['Cardiology', 'Vascular Surgery', 'Cardiac Rehabilitation'],
-    address: 'Calle 5, Escazú, San José',
-    phone: '+506 2222-2000',
-    email: 'info@heartinstitute.com',
-    rating: 4.8,
-    reviews: 187,
-    hours: [
-      { day: 'Monday-Friday', hours: '8:00 AM - 6:00 PM' },
-      { day: 'Saturday', hours: '8:00 AM - 12:00 PM' },
-    ],
-    services: ['Cardiac Consultations', 'ECG', 'Stress Tests', 'Echocardiogram', 'Holter Monitoring'],
-    insurance: ['INS', 'CCSS', 'Medismart', 'BlueCross', 'Cigna'],
-    image: '/images/clinic-placeholder.jpg',
-  },
-  {
-    id: 3,
-    name: 'Skin Health Clinic',
-    specialties: ['Dermatology', 'Cosmetic Dermatology', 'Dermatologic Surgery'],
-    address: 'Avenida Escazú, San José',
-    phone: '+506 2222-3000',
-    email: 'info@skinhealth.com',
-    rating: 4.6,
-    reviews: 156,
-    hours: [
-      { day: 'Monday-Friday', hours: '9:00 AM - 7:00 PM' },
-      { day: 'Saturday', hours: '9:00 AM - 3:00 PM' },
-    ],
-    services: ['Dermatologic Consultations', 'Skin Cancer Screening', 'Acne Treatment', 'Laser Therapy', 'Cosmetic Procedures'],
-    insurance: ['INS', 'Medismart', 'BlueCross', 'Aetna'],
-    image: '/images/clinic-placeholder.jpg',
-  },
-  {
-    id: 4,
-    name: 'Joint & Bone Center',
-    specialties: ['Orthopedics', 'Traumatology', 'Physical Therapy', 'Sports Medicine'],
-    address: 'Calle Principal, Heredia',
-    phone: '+506 2222-4000',
-    email: 'info@jointbone.com',
-    rating: 4.5,
-    reviews: 142,
-    hours: [
-      { day: 'Monday-Friday', hours: '7:00 AM - 7:00 PM' },
-      { day: 'Saturday', hours: '8:00 AM - 2:00 PM' },
-    ],
-    services: ['Orthopedic Consultations', 'X-Ray', 'MRI', 'Physical Therapy', 'Orthopedic Surgery'],
-    insurance: ['INS', 'CCSS', 'Medismart', 'BlueCross'],
-    image: '/images/clinic-placeholder.jpg',
-  },
-  {
-    id: 5,
-    name: 'Children\'s Wellness Center',
-    specialties: ['Pediatrics', 'Pediatric Cardiology', 'Pediatric Neurology', 'Child Psychology'],
-    address: 'Avenida 10, San José',
-    phone: '+506 2222-5000',
-    email: 'info@childrenswellness.com',
-    rating: 4.9,
-    reviews: 278,
-    hours: [
-      { day: 'Monday-Friday', hours: '7:00 AM - 8:00 PM' },
-      { day: 'Saturday', hours: '8:00 AM - 4:00 PM' },
-      { day: 'Sunday', hours: '9:00 AM - 12:00 PM' },
-    ],
-    services: ['Pediatric Consultations', 'Vaccinations', 'Growth & Development Monitoring', 'Pediatric Laboratory Tests'],
-    insurance: ['INS', 'CCSS', 'Medismart', 'BlueCross', 'Cigna'],
-    image: '/images/clinic-placeholder.jpg',
-  },
-];
+// Helper function to convert doctor availability to display format
+const formatDoctorAvailability = (doctor: Doctor): AvailabilityDisplay[] => {
+  if (!doctor.availability || !doctor.availability.days) {
+    return [];
+  }
+  
+  return doctor.availability.days.map(day => ({
+    day,
+    hours: doctor.availability.hours || '9:00 AM - 5:00 PM'
+  }));
+};
+
+// Helper function to convert clinic operating hours to display format
+const formatClinicHours = (clinic: Clinic): AvailabilityDisplay[] => {
+  if (!clinic.operatingHours) {
+    return [];
+  }
+  
+  return Object.entries(clinic.operatingHours).map(([day, hours]) => ({
+    day,
+    hours: `${hours.open} - ${hours.close}`
+  }));
+};
 
 export default function SearchPage() {
   const [searchType, setSearchType] = useState<'doctors' | 'clinics'>('doctors');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSpecialty, setSelectedSpecialty] = useState('');
-  // Define types for doctors and clinics
-  type Doctor = typeof mockDoctors[0];
-  type Clinic = typeof mockClinics[0];
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [clinics, setClinics] = useState<Clinic[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   const [selectedItem, setSelectedItem] = useState<Doctor | Clinic | null>(null);
-  
-  // Type guard functions to check the type of selectedItem
-  const isDoctor = (item: Doctor | Clinic | null): item is Doctor => {
-    return item !== null && 'specialty' in item;
-  };
-  
-  const isClinic = (item: Doctor | Clinic | null): item is Clinic => {
-    return item !== null && 'specialties' in item;
-  };
   const [showScheduleForm, setShowScheduleForm] = useState(false);
   const [appointmentDate, setAppointmentDate] = useState('');
   const [appointmentTime, setAppointmentTime] = useState('');
   const [showPaymentForm, setShowPaymentForm] = useState(false);
 
+  // Type guard functions to check the type of selectedItem
+  const isDoctor = (item: Doctor | Clinic | null): item is Doctor => {
+    return item !== null && 'specialization' in item;
+  };
+  
+  const isClinic = (item: Doctor | Clinic | null): item is Clinic => {
+    return item !== null && 'specialties' in item;
+  };
+
+  // Fetch doctors and clinics from API
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        if (searchType === 'doctors') {
+          const doctorsData = await DoctorsService.getAll();
+          setDoctors(doctorsData);
+        } else {
+          const clinicsData = await ClinicsService.getAll();
+          setClinics(clinicsData);
+        }
+      } catch (err) {
+        console.error(`Error fetching ${searchType}:`, err);
+        setError(`Failed to load ${searchType}. Please try again later.`);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, [searchType]);
+
   // Get all unique specialties
-  const doctorSpecialties = Array.from(new Set(mockDoctors.map(doctor => doctor.specialty)));
-  const clinicSpecialties = Array.from(new Set(mockClinics.flatMap(clinic => clinic.specialties)));
+  const doctorSpecialties = Array.from(new Set(doctors.map(doctor => doctor.specialization)));
+  const clinicSpecialties = Array.from(new Set(clinics.flatMap(clinic => clinic.specialties || [])));
   const specialties = searchType === 'doctors' ? doctorSpecialties : clinicSpecialties;
 
   // Filter results based on search query and selected specialty
   const filteredResults = searchType === 'doctors' 
-    ? mockDoctors.filter(doctor => 
-        (searchQuery === '' || doctor.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-         doctor.specialty.toLowerCase().includes(searchQuery.toLowerCase()) ||
-         doctor.clinic.toLowerCase().includes(searchQuery.toLowerCase())) &&
-        (selectedSpecialty === '' || doctor.specialty === selectedSpecialty)
+    ? doctors.filter(doctor => 
+        (searchQuery === '' || 
+         doctor.firstName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+         doctor.lastName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+         doctor.specialization.toLowerCase().includes(searchQuery.toLowerCase())) &&
+        (selectedSpecialty === '' || doctor.specialization === selectedSpecialty)
       )
-    : mockClinics.filter(clinic => 
-        (searchQuery === '' || clinic.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-         clinic.specialties.some(s => s.toLowerCase().includes(searchQuery.toLowerCase()))) &&
-        (selectedSpecialty === '' || clinic.specialties.includes(selectedSpecialty))
+    : clinics.filter(clinic => 
+        (searchQuery === '' || 
+         clinic.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+         (clinic.specialties && clinic.specialties.some(s => s.toLowerCase().includes(searchQuery.toLowerCase())))) &&
+        (selectedSpecialty === '' || (clinic.specialties && clinic.specialties.includes(selectedSpecialty)))
       );
 
   const handleScheduleAppointment = () => {
@@ -255,6 +130,14 @@ export default function SearchPage() {
     setShowScheduleForm(false);
     setShowPaymentForm(false);
   };
+
+  if (loading) {
+    return <LoadingState message={`Loading ${searchType}...`} />;
+  }
+
+  if (error) {
+    return <ErrorState title="Error" message={error} actionText="Try Again" actionLink="/search" />;
+  }
 
   return (
     <div className="space-y-8">
@@ -331,10 +214,14 @@ export default function SearchPage() {
                   </div>
                 </div>
                 <div className="p-4">
-                  <h3 className="font-bold text-lg mb-1">{item.name}</h3>
-                  {searchType === 'doctors' && 'specialty' in item ? (
-                    <p className="text-gray-600 mb-2">{item.specialty} • {item.clinic}</p>
-                  ) : 'specialties' in item ? (
+                  <h3 className="font-bold text-lg mb-1">
+                    {isDoctor(item) 
+                      ? `Dr. ${item.firstName} ${item.lastName}` 
+                      : isClinic(item) ? item.name : ''}
+                  </h3>
+                  {isDoctor(item) ? (
+                    <p className="text-gray-600 mb-2">{item.specialization}</p>
+                  ) : isClinic(item) && item.specialties ? (
                     <p className="text-gray-600 mb-2">{item.specialties.join(', ')}</p>
                   ) : null}
                   <div className="flex items-center mb-3">
@@ -369,18 +256,19 @@ export default function SearchPage() {
             <div className="md:col-span-1">
               <div className="bg-gray-100 h-64 rounded-lg flex items-center justify-center mb-4">
                 <div className="text-gray-400 text-7xl">
-                  {searchType === 'doctors' ? '👨‍⚕️' : '🏥'}
+                  {isDoctor(selectedItem) ? '👨‍⚕️' : '🏥'}
                 </div>
               </div>
               
               <div className="bg-white rounded-lg shadow p-4 mb-4">
-                <h2 className="font-bold text-xl mb-2">{selectedItem.name}</h2>
+                <h2 className="font-bold text-xl mb-2">
+                  {isDoctor(selectedItem) 
+                    ? `Dr. ${selectedItem.firstName} ${selectedItem.lastName}` 
+                    : isClinic(selectedItem) ? selectedItem.name : ''}
+                </h2>
                 {isDoctor(selectedItem) ? (
-                  <>
-                    <p className="text-gray-600 mb-2">{selectedItem.specialty}</p>
-                    <p className="text-gray-600 mb-4">{selectedItem.clinic}</p>
-                  </>
-                ) : isClinic(selectedItem) ? (
+                  <p className="text-gray-600 mb-4">{selectedItem.specialization}</p>
+                ) : isClinic(selectedItem) && selectedItem.specialties ? (
                   <p className="text-gray-600 mb-4">{selectedItem.specialties.join(', ')}</p>
                 ) : null}
                 
@@ -401,10 +289,14 @@ export default function SearchPage() {
               <div className="bg-white rounded-lg shadow p-4">
                 <h3 className="font-bold text-lg mb-3">Contact Information</h3>
                 <div className="space-y-2">
-                  <p className="flex items-start">
-                    <span className="text-gray-500 mr-2">📍</span>
-                    <span>{selectedItem.address}</span>
-                  </p>
+                  {isClinic(selectedItem) && selectedItem.address && (
+                    <p className="flex items-start">
+                      <span className="text-gray-500 mr-2">📍</span>
+                      <span>
+                        {`${selectedItem.address.street}, ${selectedItem.address.city}, ${selectedItem.address.state}, ${selectedItem.address.country}`}
+                      </span>
+                    </p>
+                  )}
                   <p className="flex items-start">
                     <span className="text-gray-500 mr-2">📞</span>
                     <span>{selectedItem.phone}</span>
@@ -423,19 +315,23 @@ export default function SearchPage() {
                 <>
                   {/* Doctor Details */}
                   <div className="bg-white rounded-lg shadow p-6">
-                    <h3 className="font-bold text-lg mb-3">About Dr. {selectedItem.name.split(' ')[1]}</h3>
+                    <h3 className="font-bold text-lg mb-3">About Dr. {selectedItem.lastName}</h3>
                     <p className="text-gray-600 mb-4">
-                      Dr. {selectedItem.name.split(' ')[1]} is a highly qualified {selectedItem.specialty.toLowerCase()} specialist with extensive experience in diagnosing and treating a wide range of conditions. They are committed to providing personalized care to all patients.
+                      Dr. {selectedItem.lastName} is a highly qualified {selectedItem.specialization.toLowerCase()} specialist with {selectedItem.yearsOfExperience} years of experience in diagnosing and treating a wide range of conditions. {selectedItem.bio || 'They are committed to providing personalized care to all patients.'}
                     </p>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                       <div>
                         <h4 className="font-medium text-gray-700">Education</h4>
-                        <p className="text-gray-600">{selectedItem.education}</p>
+                        <p className="text-gray-600">
+                          {selectedItem.education ? selectedItem.education.join(', ') : 'Information not available'}
+                        </p>
                       </div>
                       <div>
                         <h4 className="font-medium text-gray-700">Languages</h4>
-                        <p className="text-gray-600">{selectedItem.languages.join(', ')}</p>
+                        <p className="text-gray-600">
+                          {selectedItem.languages ? selectedItem.languages.join(', ') : 'Information not available'}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -444,12 +340,15 @@ export default function SearchPage() {
                   <div className="bg-white rounded-lg shadow p-6">
                     <h3 className="font-bold text-lg mb-3">Availability</h3>
                     <div className="space-y-2">
-                      {selectedItem.availability.map((slot, index) => (
+                      {formatDoctorAvailability(selectedItem).map((slot, index) => (
                         <div key={index} className="flex justify-between border-b pb-2">
                           <span className="font-medium">{slot.day}</span>
                           <span className="text-gray-600">{slot.hours}</span>
                         </div>
                       ))}
+                      {formatDoctorAvailability(selectedItem).length === 0 && (
+                        <p className="text-gray-600">Availability information not provided.</p>
+                      )}
                     </div>
                   </div>
                 </>
@@ -459,7 +358,7 @@ export default function SearchPage() {
                   <div className="bg-white rounded-lg shadow p-6">
                     <h3 className="font-bold text-lg mb-3">About {selectedItem.name}</h3>
                     <p className="text-gray-600 mb-4">
-                      {selectedItem.name} is a leading medical facility specializing in {selectedItem.specialties.join(', ')}. The clinic is equipped with state-of-the-art technology and staffed by experienced healthcare professionals dedicated to providing high-quality care.
+                      {selectedItem.description || `${selectedItem.name} is a leading medical facility specializing in ${selectedItem.specialties?.join(', ') || 'various medical services'}. The clinic is equipped with state-of-the-art technology and staffed by experienced healthcare professionals dedicated to providing high-quality care.`}
                     </p>
                   </div>
                   
@@ -467,12 +366,15 @@ export default function SearchPage() {
                   <div className="bg-white rounded-lg shadow p-6">
                     <h3 className="font-bold text-lg mb-3">Services</h3>
                     <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {selectedItem.services.map((service, index) => (
+                      {selectedItem.services?.map((service, index) => (
                         <li key={index} className="flex items-center">
                           <span className="text-blue-500 mr-2">✓</span>
                           <span>{service}</span>
                         </li>
                       ))}
+                      {(!selectedItem.services || selectedItem.services.length === 0) && (
+                        <p className="text-gray-600">Services information not provided.</p>
+                      )}
                     </ul>
                   </div>
                   
@@ -481,23 +383,29 @@ export default function SearchPage() {
                     <div className="bg-white rounded-lg shadow p-6">
                       <h3 className="font-bold text-lg mb-3">Hours</h3>
                       <div className="space-y-2">
-                        {selectedItem.hours.map((slot, index) => (
+                        {formatClinicHours(selectedItem).map((slot, index) => (
                           <div key={index} className="flex justify-between border-b pb-2">
                             <span className="font-medium">{slot.day}</span>
                             <span className="text-gray-600">{slot.hours}</span>
                           </div>
                         ))}
+                        {formatClinicHours(selectedItem).length === 0 && (
+                          <p className="text-gray-600">Hours information not provided.</p>
+                        )}
                       </div>
                     </div>
                     
                     <div className="bg-white rounded-lg shadow p-6">
                       <h3 className="font-bold text-lg mb-3">Insurance Accepted</h3>
                       <div className="flex flex-wrap gap-2">
-                        {selectedItem.insurance.map((ins, index) => (
+                        {selectedItem.insuranceAccepted?.map((ins, index) => (
                           <span key={index} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
                             {ins}
                           </span>
                         ))}
+                        {(!selectedItem.insuranceAccepted || selectedItem.insuranceAccepted.length === 0) && (
+                          <p className="text-gray-600">Insurance information not provided.</p>
+                        )}
                       </div>
                     </div>
                   </div>
