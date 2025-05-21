@@ -1,7 +1,26 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { MedicalServicesService } from '@/services/medical-services.service';
+import { MedicalService } from '@/types';
+import MedicalServiceCard from '@/components/MedicalServiceCard';
+import ErrorState from '@/components/ErrorState';
 
-export default function Home() {
+// Fetch featured medical services
+async function getFeaturedServices() {
+  try {
+    const services = await MedicalServicesService.getAll();
+    // Return the top 3 services with highest rating
+    return services
+      .sort((a, b) => b.rating - a.rating)
+      .slice(0, 3);
+  } catch (error) {
+    console.error('Error fetching featured services:', error);
+    return [];
+  }
+}
+
+export default async function Home() {
+  const featuredServices = await getFeaturedServices();
   return (
     <div className="space-y-8">
       <section className="bg-blue-50 p-8 rounded-lg">
@@ -17,56 +36,23 @@ export default function Home() {
       </section>
 
       <section>
-        <h2 className="text-2xl font-bold mb-4">Featured Products</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="product-card">
-            <div className="relative h-48 w-full">
-              <div className="bg-blue-100 h-full w-full flex items-center justify-center">
-                <div className="text-blue-500 font-bold text-xl">Surgery Image</div>
-              </div>
-            </div>
-            <div className="content">
-              <h3 className="text-xl font-semibold">General Surgery</h3>
-              <p className="text-gray-600 mb-2">Comprehensive surgical procedures</p>
-              <p className="text-blue-600 font-bold mb-4">$5,000</p>
-              <Link href="/products/1" className="btn btn-primary block text-center">
-                View Details
-              </Link>
-            </div>
+        <h2 className="text-2xl font-bold mb-4">Featured Medical Services</h2>
+        {featuredServices.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featuredServices.map(service => (
+              <MedicalServiceCard key={service.id} service={service} />
+            ))}
           </div>
-
-          <div className="product-card">
-            <div className="relative h-48 w-full">
-              <div className="bg-green-100 h-full w-full flex items-center justify-center">
-                <div className="text-green-500 font-bold text-xl">Dental Image</div>
-              </div>
-            </div>
-            <div className="content">
-              <h3 className="text-xl font-semibold">Dental Procedures</h3>
-              <p className="text-gray-600 mb-2">Complete dental care solutions</p>
-              <p className="text-blue-600 font-bold mb-4">$1,200</p>
-              <Link href="/products/2" className="btn btn-primary block text-center">
-                View Details
-              </Link>
-            </div>
+        ) : (
+          <div className="col-span-3 text-center py-8">
+            <ErrorState 
+              title="No featured services available" 
+              message="We couldn't find any featured services at the moment."
+              actionText="Browse All Services"
+              actionLink="/products"
+            />
           </div>
-
-          <div className="product-card">
-            <div className="relative h-48 w-full">
-              <div className="bg-red-100 h-full w-full flex items-center justify-center">
-                <div className="text-red-500 font-bold text-xl">Cardiology Image</div>
-              </div>
-            </div>
-            <div className="content">
-              <h3 className="text-xl font-semibold">Cardiology Services</h3>
-              <p className="text-gray-600 mb-2">Heart health diagnostics and treatments</p>
-              <p className="text-blue-600 font-bold mb-4">$3,500</p>
-              <Link href="/products/3" className="btn btn-primary block text-center">
-                View Details
-              </Link>
-            </div>
-          </div>
-        </div>
+        )}
       </section>
 
       <section className="bg-gray-50 p-6 rounded-lg">

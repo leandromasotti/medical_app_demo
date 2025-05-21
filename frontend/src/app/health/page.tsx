@@ -1,16 +1,20 @@
-import Link from 'next/link';
+'use client';
 
-// Mock data for demonstration purposes
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { DoctorsService } from '@/services/doctors.service';
+import { PatientsService } from '@/services/patients.service';
+import { PatientMedicalServicesService } from '@/services/patient-medical-services.service';
+import { Doctor, Patient, PatientMedicalService, PatientMedicalServiceStatus } from '@/types';
+import LoadingState from '@/components/LoadingState';
+import ErrorState from '@/components/ErrorState';
+
+// Mock data for demonstration purposes - we'll keep these for now as the backend
+// might not have all the data structures we need for this page
 const mockLabTests = [
   { id: 1, name: 'Complete Blood Count (CBC)', date: '2023-10-15', status: 'Completed', result: 'Normal' },
   { id: 2, name: 'Lipid Panel', date: '2023-10-15', status: 'Completed', result: 'Elevated Cholesterol' },
   { id: 3, name: 'Glucose Test', date: '2023-09-01', status: 'Completed', result: 'Normal' },
-];
-
-const mockVisits = [
-  { id: 1, provider: 'Dr. Maria Rodriguez', specialty: 'Primary Care', date: '2023-10-15', time: '10:00 AM', notes: 'Annual physical examination' },
-  { id: 2, provider: 'Dr. Carlos Jimenez', specialty: 'Cardiology', date: '2023-09-05', time: '2:30 PM', notes: 'Follow-up on heart health' },
-  { id: 3, provider: 'Dr. Ana Vargas', specialty: 'Dermatology', date: '2023-08-12', time: '11:15 AM', notes: 'Skin condition assessment' },
 ];
 
 const mockDocuments = [
@@ -20,25 +24,115 @@ const mockDocuments = [
   { id: 4, name: 'Radiology Report - Chest X-Ray', date: '2023-07-22', type: 'PDF' },
 ];
 
-const mockProviders = [
-  { id: 1, name: 'Dr. Maria Rodriguez', specialty: 'Primary Care', clinic: 'Central Medical Center', phone: '+506 2222-1111' },
-  { id: 2, name: 'Dr. Carlos Jimenez', specialty: 'Cardiology', clinic: 'Heart & Vascular Institute', phone: '+506 2222-2222' },
-  { id: 3, name: 'Dr. Ana Vargas', specialty: 'Dermatology', clinic: 'Skin Health Clinic', phone: '+506 2222-3333' },
-];
-
-const mockAppointments = [
-  { id: 1, provider: 'Dr. Maria Rodriguez', specialty: 'Primary Care', date: '2023-12-15', time: '9:30 AM', status: 'Scheduled' },
-  { id: 2, provider: 'Dr. Carlos Jimenez', specialty: 'Cardiology', date: '2024-01-10', time: '2:00 PM', status: 'Scheduled' },
-];
-
 export default function HealthPage() {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [patientServices, setPatientServices] = useState<PatientMedicalService[]>([]);
+  const [patient, setPatient] = useState<Patient | null>(null);
+
+  // For demo purposes, we'll use a fixed patient ID
+  const patientId = 1;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        // Fetch doctors
+        const doctorsData = await DoctorsService.getAll();
+        setDoctors(doctorsData);
+        
+        // Fetch patient data
+        const patientData = await PatientsService.getById(patientId);
+        setPatient(patientData);
+        
+        // Fetch patient medical services
+        const servicesData = await PatientMedicalServicesService.getAll();
+        const patientServicesData = servicesData.filter(service => service.patientId === patientId);
+        setPatientServices(patientServicesData);
+      } catch (err) {
+        console.error('Error fetching health data:', err);
+        setError('Failed to load health data. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, []);
+
+  // For demo purposes, we'll create mock appointments and visits based on the patient services
+  // In a real app, these would come from the backend with proper scheduling information
+  const mockAppointmentData = [
+    { serviceId: 1, doctorId: 1, date: '2025-06-01', time: '9:00 AM' },
+    { serviceId: 2, doctorId: 2, date: '2025-06-15', time: '2:30 PM' }
+  ];
+  
+  const mockVisitData = [
+    { serviceId: 3, doctorId: 3, date: '2025-04-10', time: '11:00 AM', notes: 'Regular checkup. Blood pressure normal.' },
+    { serviceId: 4, doctorId: 1, date: '2025-03-22', time: '3:15 PM', notes: 'Follow-up visit. Patient reports improvement in symptoms.' }
+  ];
+
+  // Convert patient services to appointments using mock data
+  const appointments = patientServices
+    .filter(service => service.status === PatientMedicalServiceStatus.SCHEDULED)
+    .map(service => {
+      const mockData = mockAppointmentData.find(m => m.serviceId === service.medicalServiceId) || 
+                      { doctorId: 1, date: '2025-06-01', time: '9:00 AM' };
+      return {
+        id: service.id,
+        provider: doctors.find(d => d.id === mockData.doctorId)?.firstName + ' ' + 
+                 doctors.find(d => d.id === mockData.doctorId)?.lastName || 'Unknown Doctor',
+        specialty: doctors.find(d => d.id === mockData.doctorId)?.specialization || 'Unknown Specialty',
+        date: mockData.date,
+        time: mockData.time,
+        status: 'Scheduled'
+      };
+    });
+
+  // Convert patient services to visits using mock data
+  const visits = patientServices
+    .filter(service => service.status === PatientMedicalServiceStatus.COMPLETED)
+    .map(service => {
+      const mockData = mockVisitData.find(m => m.serviceId === service.medicalServiceId) || 
+                      { doctorId: 1, date: '2025-04-10', time: '11:00 AM', notes: 'Regular checkup.' };
+      return {
+        id: service.id,
+        provider: doctors.find(d => d.id === mockData.doctorId)?.firstName + ' ' + 
+                 doctors.find(d => d.id === mockData.doctorId)?.lastName || 'Unknown Doctor',
+        specialty: doctors.find(d => d.id === mockData.doctorId)?.specialization || 'Unknown Specialty',
+        date: mockData.date,
+        time: mockData.time,
+        notes: service.notes || mockData.notes || 'No notes available'
+      };
+    });
+
+  // Convert doctors to providers
+  const providers = doctors.map(doctor => ({
+    id: doctor.id,
+    name: `Dr. ${doctor.firstName} ${doctor.lastName}`,
+    specialty: doctor.specialization,
+    clinic: doctor.clinicId ? `Clinic #${doctor.clinicId}` : 'Unknown Clinic',
+    phone: doctor.phone || 'Not available'
+  }));
+
+  if (loading) {
+    return <LoadingState message="Loading your health dashboard..." />;
+  }
+
+  if (error) {
+    return <ErrorState title="Error" message={error} actionText="Try Again" actionLink="/health" />;
+  }
+
   return (
     <div className="space-y-8">
       <h1 className="text-3xl font-bold">My Health Dashboard</h1>
       
       <div className="bg-blue-50 p-6 rounded-lg mb-8">
         <p className="text-lg">
-          Welcome to your personal health dashboard. Here you can access your medical records, track appointments, and manage your healthcare information.
+          Welcome {patient?.firstName} to your personal health dashboard. Here you can access your medical records, track appointments, and manage your healthcare information.
         </p>
       </div>
       
@@ -69,7 +163,7 @@ export default function HealthPage() {
           <button className="bg-white text-blue-600 px-4 py-1 rounded text-sm font-medium">View All</button>
         </div>
         <div className="p-4">
-          {mockAppointments.length > 0 ? (
+          {appointments.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
@@ -83,7 +177,7 @@ export default function HealthPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {mockAppointments.map((appointment) => (
+                  {appointments.map((appointment) => (
                     <tr key={appointment.id}>
                       <td className="px-6 py-4 whitespace-nowrap">{appointment.provider}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{appointment.specialty}</td>
@@ -164,9 +258,9 @@ export default function HealthPage() {
           <button className="bg-white text-blue-600 px-4 py-1 rounded text-sm font-medium">View All</button>
         </div>
         <div className="p-4">
-          {mockVisits.length > 0 ? (
+          {visits.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {mockVisits.map((visit) => (
+              {visits.map((visit) => (
                 <div key={visit.id} className="border rounded-lg p-4">
                   <div className="flex justify-between">
                     <div>
@@ -234,9 +328,9 @@ export default function HealthPage() {
           <button className="bg-white text-blue-600 px-4 py-1 rounded text-sm font-medium">View All</button>
         </div>
         <div className="p-4">
-          {mockProviders.length > 0 ? (
+          {providers.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {mockProviders.map((provider) => (
+              {providers.map((provider) => (
                 <div key={provider.id} className="border rounded-lg p-4">
                   <div className="flex items-start">
                     <div className="bg-blue-100 rounded-full h-12 w-12 flex items-center justify-center mr-3">
